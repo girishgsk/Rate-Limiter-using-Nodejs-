@@ -1,0 +1,43 @@
+*** Instruction to Run the Task ****
+
+1. Install dependencies:" npm init / npm Install "
+
+2. Ensure Redis is running:
+   If Redis is installed locally, start the Redis server: " redis-server "
+
+3. Using Docker, make sure the Redis container is running : " docker ps "  
+
+4. Start the Node.js app: " npm start " 
+
+5. API Endpoints : POST /task
+   Request Body: json {
+        "user_id": "123"
+   }
+
+   curl -X POST http://localhost:3000/task \
+     -H "Content-Type: application/json" \
+     -d '{"user_id":"123"}'
+
+
+6. task log entry: 123 - Task completed at 2024-09-30T12:00:00.000Z
+
+
+//=========Task approach and any assumptions made =====
+
+1. Rate Limiting Logic
+
+   a. Rate Limiting: Each user is restricted to 1 task per second and a maximum of 20 tasks per minute. If a user exceeds the rate, the tasks are added to the queue and processed after the appropriate delay.
+
+   b. Redis: The rate limiter uses Redis to store and manage the rate limit information for each user.
+   
+2. Task Queue (queue.js)
+
+   a. Task Queuing: The bull library is used to create a task queue that processes tasks based on the user’s rate limits.
+
+   b. Logging: The task completion is logged into task_log.txt via the logTaskCompletion function using the fs module.
+
+3. Cluster Setup
+
+   a. Clustering: The app runs with multiple Node.js processes (workers) for load balancing. If a worker process crashes, the master process automatically starts a new one.
+
+
